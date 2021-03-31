@@ -552,7 +552,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			 * 1：设置容器启动时间
 			 * 2：设置关闭状态 false
 			 * 3：设置活跃状态 true
-			 * 4：获取Environment
+			 * 4：获取Environment,加载到this.environment对象
 			 * 5：设置监听器准备 默认为空 ？ 监听器有什么用？ 如何做监听 处理
 			 */
 			prepareRefresh();
@@ -565,7 +565,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// beanFactory的准备工作，对各种属性进行填充
+			// beanFactory的准备工作， 都是初始化操作，对各种属性进行填充
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -649,9 +649,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		// 环境系统设置
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
+		// 设置监听器时间 Spring 没有  SpringMVC就有设置
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
@@ -703,6 +705,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Configure the bean factory with context callbacks.
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+		// 设置忽略Aware接口 ， 后续统一处理
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
